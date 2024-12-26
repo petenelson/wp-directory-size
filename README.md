@@ -1,15 +1,12 @@
 # Dashboard Directory Size #
-**Contributors:** gungeekatx  
+**Contributors:** [gungeekatx](https://profiles.wordpress.org/gungeekatx/)  
 **Tags:** dashboard, dashboard widget, directory size, folder size  
 **Donate link:** https://petenelson.io/  
 **Requires at least:** 4.4  
-**Tested up to:** 6.7.1
+**Tested up to:** 6.7.1  
 **Stable tag:** 1.6.1  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
-
-[![Code Climate](https://codeclimate.com/github/petenelson/dashboard-directory-size/badges/gpa.svg)](https://codeclimate.com/github/petenelson/dashboard-directory-size)
-
 
 Dashboard widget to display directory sizes
 
