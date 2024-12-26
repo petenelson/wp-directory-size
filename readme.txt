@@ -26,7 +26,7 @@ Find us on [GitHub](https://github.com/petenelson/dashboard-directory-size)
 
 == Changelog ==
 
-= v1.6.1 February 17, 2024 =
+= v1.6.1 December 26, 2024 =
 * Fixed deprecated notices for PHP 8.
 
 = v1.6.0 February 24, 2017 =
