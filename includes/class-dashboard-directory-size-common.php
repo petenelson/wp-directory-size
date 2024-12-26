@@ -6,10 +6,14 @@ if ( ! class_exists( 'Dashboard_Directory_Size_Common' ) ) {
 
 	class Dashboard_Directory_Size_Common {
 
-		const VERSION         = '2017-02-24-01';
+		const VERSION         = '2024-02-18';
 		const PLUGIN_NAME     = 'dashboard-directory-size';
 
-
+		/**
+		 * Setup WordPress hooks and filters.
+		 *
+		 * @return void
+		 */
 		static public function plugins_loaded() {
 
 			add_filter( Dashboard_Directory_Size_Common::PLUGIN_NAME . '-get', 'Dashboard_Directory_Size_Common::filter_get_directory_size', 10, 2 );
@@ -19,10 +23,13 @@ if ( ! class_exists( 'Dashboard_Directory_Size_Common' ) ) {
 			add_action( Dashboard_Directory_Size_Common::PLUGIN_NAME . '-flush-sizes-transient', 'Dashboard_Directory_Size_Common::flush_sizes_transient' );
 
 			self::add_transient_flushers();
-
 		}
 
-
+		/**
+		 * Adds actions and filters to allow purging of the transients.
+		 *
+		 * @return void
+		 */
 		static public function add_transient_flushers() {
 
 			// hooks and filters to allow us to purge the transient
@@ -38,10 +45,14 @@ if ( ! class_exists( 'Dashboard_Directory_Size_Common' ) ) {
 			foreach ( array( 'update_option', 'deleted_site_transient' ) as $action ) {
 				add_action( $action, 'Dashboard_Directory_Size_Common::flush_sizes_on_item_match' );
 			}
-
 		}
 
-
+		/**
+		 * Filter to get directories.
+		 *
+		 * @param array $directories List of directories.
+		 * @return array
+		 */
 		static public function filter_get_directories( $directories ) {
 
 			$cli = defined( 'WP_CLI' ) && WP_CLI;
@@ -86,10 +97,13 @@ if ( ! class_exists( 'Dashboard_Directory_Size_Common' ) ) {
 			$results = apply_filters( Dashboard_Directory_Size_Common::PLUGIN_NAME . '-sizes-generated', $results );
 
 			return $results;
-
 		}
 
-
+		/**
+		 * Gets a list of common directories.
+		 *
+		 * @return array
+		 */
 		static public function get_common_dirs() {
 
 			$dir_list = array();
@@ -111,10 +125,13 @@ if ( ! class_exists( 'Dashboard_Directory_Size_Common' ) ) {
 			}
 
 			return $dir_list;
-
 		}
 
-
+		/**
+		 * Gets a list of custom directories.
+		 *
+		 * @return array
+		 */
 		static public function get_custom_dirs() {
 
 			$dir_list = array();
@@ -136,9 +153,7 @@ if ( ! class_exists( 'Dashboard_Directory_Size_Common' ) ) {
 			}
 
 			return $dir_list;
-
 		}
-
 
 		/**
 		 * Converts a custom row entry from settings into a directory
@@ -161,10 +176,13 @@ if ( ! class_exists( 'Dashboard_Directory_Size_Common' ) ) {
 			}
 
 			return null;
-
 		}
 
-
+		/**
+		 * Gets the database size and info.
+		 *
+		 * @return array
+		 */
 		static public function get_database_size() {
 
 			global $wpdb;
@@ -176,10 +194,15 @@ if ( ! class_exists( 'Dashboard_Directory_Size_Common' ) ) {
 			$database['database'] = true;
 
 			return array( $database );
-
 		}
 
-
+		/**
+		 * Creates a directory info array.
+		 *
+		 * @param string $name The name of the directory.
+		 * @param string $path The path of the directory.
+		 * @return array|null
+		 */
 		static public function create_directory_info( $name, $path ) {
 
 			if ( ! empty( $path ) ) {
@@ -190,10 +213,14 @@ if ( ! class_exists( 'Dashboard_Directory_Size_Common' ) ) {
 			} else {
 				return null;
 			}
-
 		}
 
-
+		/**
+		 * Gets the path for a common directory.
+		 *
+		 * @param string $common_dir The common dir.
+		 * @return string
+		 */
 		static public function get_path_for_common_dir( $common_dir ) {
 
 			switch ( $common_dir ) {
@@ -215,16 +242,27 @@ if ( ! class_exists( 'Dashboard_Directory_Size_Common' ) ) {
 				default:
 					return '';
 			}
-
 		}
 
-
+		/**
+		 * Filter hook to get the directory size.
+		 *
+		 * @param int $size    The size of the directory.
+		 * @param string $path The path of the directory.
+		 * @return void
+		 */
 		static public function filter_get_directory_size( $size, $path ) {
 			$size = self::get_directory_size( $path );
 			return $size;
 		}
 
-
+		/**
+		 * Gets the size of a directory.
+		 *
+		 * @param string  $path    The path of the directory.
+		 * @param boolean $refresh Whether to refresh the transient.
+		 * @return int
+		 */
 		static public function get_directory_size( $path, $refresh = false ) {
 
 			$transient_time = self::get_transient_time();
@@ -257,16 +295,30 @@ if ( ! class_exists( 'Dashboard_Directory_Size_Common' ) ) {
 			return $size;
 		}
 
-
+		/**
+		 * Gets the time for the transient.
+		 *
+		 * @return int
+		 */
 		static public function get_transient_time() {
 			return intval( apply_filters( Dashboard_Directory_Size_Common::PLUGIN_NAME . '-setting-get', 60, Dashboard_Directory_Size_Common::PLUGIN_NAME . '-settings-general', 'transient-time-minutes' ) );
 		}
 
-
+		/**
+		 * Gets the number of decimal places to use.
+		 *
+		 * @return int
+		 */
 		static public function get_decimal_places() {
 			return intval( apply_filters( Dashboard_Directory_Size_Common::PLUGIN_NAME . '-setting-get', 0, Dashboard_Directory_Size_Common::PLUGIN_NAME . '-settings-general', 'decimal-places' ) );
 		}
 
+		/**
+		 * Flushes the sizes transient when a specific item is matched.
+		 *
+		 * @param string $item The item to match.
+		 * @return void
+		 */
 		static public function flush_sizes_on_item_match( $item ) {
 			// hook for deleted plugins and deleted themes
 			$flushable_items = array( 'active_plugins', 'uninstall_plugins', 'update_themes' );
@@ -275,7 +327,12 @@ if ( ! class_exists( 'Dashboard_Directory_Size_Common' ) ) {
 			}
 		}
 
-
+		/**
+		 * Flushes the sizes transient.
+		 *
+		 * @param mixed $data The original data. Does not get modified.
+		 * @return mixed
+		 */
 		static public function flush_sizes_transient( $data = null ) {
 
 			$directories = apply_filters( Dashboard_Directory_Size_Common::PLUGIN_NAME . '-get-directories', array() );
@@ -287,17 +344,32 @@ if ( ! class_exists( 'Dashboard_Directory_Size_Common' ) ) {
 			return $data;
 		}
 
-
+		/**
+		 * Flushes a specific size transient.
+		 *
+		 * @param string $path The path of the directory.
+		 * @return void
+		 */
 		static public function flush_size_transient( $path ) {
 			delete_transient( self::transient_path_key( $path ) );
 		}
 
-
+		/**
+		 * The meta key for the transient.
+		 *
+		 * @param string $path The path of the directory.
+		 * @return string
+		 */
 		static public function transient_path_key( $path ) {
 			return 'DD-Path-Size-' . md5( $path );
 		}
 
-
+		/**
+		 * Adds human-readable sizes to the results.
+		 *
+		 * @param array $results The results.
+		 * @return array
+		 */
 		static public function apply_friendly_sizes( $results ) {
 			if ( is_array( $results ) ) {
 				for( $i = 0; $i < count( $results ); $i++ ) {
@@ -314,9 +386,9 @@ if ( ! class_exists( 'Dashboard_Directory_Size_Common' ) ) {
 		/**
 		 * Trims a path to a predetermined length
 		 *
-		 * @param  string $path full path
-		 * @return array       trimmed path and boolean to indicate if
-		 *                     it was trimmed
+		 * @param  string $path Full path.
+		 * @return array        Trimmed path and boolean to indicate if
+		 *                      it was trimmed.
 		 */
 		static public function trim_path( $path ) {
 
@@ -338,8 +410,5 @@ if ( ! class_exists( 'Dashboard_Directory_Size_Common' ) ) {
 
 			return compact( 'path', 'full_path', 'trimmed' );
 		}
-
-
-	} // end class
-
+	}
 }
